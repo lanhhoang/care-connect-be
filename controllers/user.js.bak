@@ -52,13 +52,15 @@ module.exports.signup = function (req, res, next) {
 };
 
 module.exports.signin = function (req, res, next) {
+
   console.log("=====> TESTING SIGNIN");
 
-  passport.authenticate('login', async (err, user, info) => {
+  passport.authenticate("login", async (err, user, info) => {
     
     try {
       console.log("==DEBUG ERR ==> " + err);
       console.log("==DEBUG USER ==> " + user);
+
 
       if (err || !user) {
         console.log("==DEBUG INFO ==> " + info.message);
@@ -67,12 +69,12 @@ module.exports.signin = function (req, res, next) {
           message: err || info.message,
         });
       }
-
+      
       req.login(user, { session: false }, async (error) => {
         if (error) {
           return next(error);
         }
-
+        
         // Generating the JWT token.
         const payload = {
           id: user._id,
@@ -104,7 +106,7 @@ module.exports.signin = function (req, res, next) {
   })(req, res, next);
 };
 
-module.exports.myprofile = async function (req, res, next) {
+exports.myprofile = async function (req, res, next) {
   try {
     let id = req.payload.id;
     let me = await User.findById(id).select(
@@ -131,7 +133,6 @@ module.exports.userEdit = (req, res, next) => {
     console.log("==DEBUG updatedUser last name ==> " + req.body.lastName);
     console.log("==DEBUG updatedUser email ==> " + req.body.email);
     console.log("==DEBUG updatedUser username ==> " + req.body.username);
-    console.log("==DEBUG updatedUser password ==> " + req.body.password);
     console.log("==DEBUG id ==> " + id);
 
     User.updateOne({ _id: id }, updatedUser, (err, result) => {

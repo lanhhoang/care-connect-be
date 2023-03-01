@@ -21,7 +21,7 @@ module.exports.errorHandlerMiddleware = (error, request, response, next) => {
   }
 
   const errorResponse = {
-    success: false,
+    sucess: false,
     message: getErrorMessage(error),
   };
 

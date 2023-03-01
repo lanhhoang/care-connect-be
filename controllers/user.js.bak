@@ -1,10 +1,8 @@
-const passport = require("passport");
-const jwt = require("jsonwebtoken");
+let User = require("../models/user");
+let passport = require("passport");
 
-const config = require("../config/config");
-const User = require("../models/user");
-
-const selectOptions = "firstName lastName email phoneNumber username role";
+let jwt = require("jsonwebtoken");
+let config = require("../config/config");
 
 function getErrorMessage(err) {
   console.log(err);
@@ -32,7 +30,7 @@ function getErrorMessage(err) {
   return message;
 }
 
-const signup = (req, res, next) => {
+module.exports.signup = function (req, res, next) {
   let user = new User(req.body);
   user.provider = "local";
   // console.log(user);
@@ -53,11 +51,16 @@ const signup = (req, res, next) => {
   });
 };
 
-const signin = (req, res, next) => {
+module.exports.signin = function (req, res, next) {
+
+  console.log("=====> TESTING SIGNIN");
+
   passport.authenticate("login", async (err, user, info) => {
+    
     try {
       console.log("==DEBUG ERR ==> " + err);
       console.log("==DEBUG USER ==> " + user);
+
 
       if (err || !user) {
         console.log("==DEBUG INFO ==> " + info.message);
@@ -66,17 +69,16 @@ const signin = (req, res, next) => {
           message: err || info.message,
         });
       }
-
+      
       req.login(user, { session: false }, async (error) => {
         if (error) {
           return next(error);
         }
-
+        
         // Generating the JWT token.
         const payload = {
           id: user._id,
-          username: user.username,
-          role: user.role,
+          email: user.email,
         };
         const token = jwt.sign(
           {
@@ -85,7 +87,7 @@ const signin = (req, res, next) => {
           config.SECRETKEY,
           {
             algorithm: "HS512",
-            expiresIn: "1d",
+            expiresIn: "20min",
           }
         );
 
@@ -104,13 +106,16 @@ const signin = (req, res, next) => {
   })(req, res, next);
 };
 
-const userList = async (req, res, next) => {
+exports.myprofile = async function (req, res, next) {
   try {
-    const users = await User.find({}).select(selectOptions);
+    let id = req.payload.id;
+    let me = await User.findById(id).select(
+      "firstName lastName email username admin created"
+    );
 
-    res.status(200).json(users);
+    res.status(200).json(me);
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
@@ -118,26 +123,17 @@ const userList = async (req, res, next) => {
   }
 };
 
-const userProfile = async (req, res, next) => {
-  try {
-    const id = req.payload.id;
-    const user = await User.findById(id).select(selectOptions);
-
-    res.status(200).json(user);
-  } catch (error) {
-    console.error(error);
-    return res.status(400).json({
-      success: false,
-      message: getErrorMessage(error),
-    });
-  }
-};
-
-
-const userEdit = (req, res, next) => {
+module.exports.userEdit = (req, res, next) => {
   try {
     const { id } = req.params;
     const updatedUser = req.body;
+
+    console.log("==TEST USER EDIT");
+    console.log("==DEBUG updatedUser 1st name ==> " + req.body.firstName);
+    console.log("==DEBUG updatedUser last name ==> " + req.body.lastName);
+    console.log("==DEBUG updatedUser email ==> " + req.body.email);
+    console.log("==DEBUG updatedUser username ==> " + req.body.username);
+    console.log("==DEBUG id ==> " + id);
 
     User.updateOne({ _id: id }, updatedUser, (err, result) => {
       if (err) {
@@ -161,12 +157,4 @@ const userEdit = (req, res, next) => {
       message: getErrorMessage(err),
     });
   }
-};
-
-module.exports = {
-  signup,
-  signin,
-  userList,
-  userProfile,
-  userEdit,
 };

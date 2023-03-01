@@ -18,4 +18,8 @@ router.post("/signup", signup);
 
 router.post("/signin", signin);
 
+/* PUT update user */
+//router.put("/edit/:id", usersController.userEdit);
+router.put("/edit/:id", authController.requireAuth, usersController.userEdit);
+
 module.exports = router;

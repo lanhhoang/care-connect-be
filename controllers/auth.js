@@ -1,7 +1,6 @@
-let passport = require("passport");
-let UserModel = require("../models/user");
+const passport = require("passport");
 
-function getErrorMessage(err) {
+const getErrorMessage = (err) => {
   if (err.errors) {
     for (let errName in err.errors) {
       if (err.errors[errName].message) return err.errors[errName].message;
@@ -12,10 +11,10 @@ function getErrorMessage(err) {
   } else {
     return "Unknown server error";
   }
-}
+};
 
 // helper function for guard purposes
-exports.requireAuth = function (req, res, next) {
+const requireAuth = (req, res, next) => {
   passport.authenticate(
     "tokencheck",
     { session: false },
@@ -79,3 +78,7 @@ exports.requireAuth = function (req, res, next) {
 //     });
 //   }
 // };
+
+module.exports = {
+  requireAuth,
+};

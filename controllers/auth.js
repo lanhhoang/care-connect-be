@@ -36,6 +36,28 @@ const requireAuth = (req, res, next) => {
   )(req, res, next);
 };
 
+const requireAdmin = (req, res, next) => {
+  console.log(req.payload.role);
+  if (req.payload.role !== "admin") {
+    return res.status(403).json({
+      success: false,
+      message: "Access Denied",
+    });
+  }
+  next();
+};
+
+const requireEmployee = (req, res, next) => {
+  console.log(req.payload.role);
+  if (!["admin", "doctor", "nurse"].includes(req.payload.role)) {
+    return res.status(403).json({
+      success: false,
+      message: "Access Denied",
+    });
+  }
+  next();
+};
+
 // Validates the owner of the item.
 // exports.isAllowed = async function (req, res, next) {
 //   try {
@@ -81,4 +103,6 @@ const requireAuth = (req, res, next) => {
 
 module.exports = {
   requireAuth,
+  requireAdmin,
+  requireEmployee,
 };

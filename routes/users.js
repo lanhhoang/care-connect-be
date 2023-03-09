@@ -1,13 +1,21 @@
-let express = require("express");
-let router = express.Router();
-let usersController = require("../controllers/user");
-let authController = require("../controllers/auth");
+const express = require("express");
+const router = express.Router();
+const {
+  signup,
+  signin,
+  userList,
+  userProfile,
+} = require("../controllers/user");
+const { requireAuth, requireAdmin } = require("../controllers/auth");
 
 /* GET users listing. */
-router.get("/me", authController.requireAuth, usersController.myprofile);
+router.get("/list", requireAuth, requireAdmin, userList);
 
-router.post("/signup", usersController.signup);
+/* GET user profile. */
+router.get("/me", requireAuth, userProfile);
 
-router.post("/signin", usersController.signin);
+router.post("/signup", signup);
+
+router.post("/signin", signin);
 
 module.exports = router;

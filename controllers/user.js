@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const User = require("../models/user");
 
+const selectOptions = "firstName lastName email phoneNumber username role";
+
 function getErrorMessage(err) {
   console.log(err);
   let message = "";
@@ -30,7 +32,7 @@ function getErrorMessage(err) {
   return message;
 }
 
-module.exports.signup = function (req, res, next) {
+const signup = (req, res, next) => {
   let user = new User(req.body);
   user.provider = "local";
   // console.log(user);
@@ -51,7 +53,7 @@ module.exports.signup = function (req, res, next) {
   });
 };
 
-module.exports.signin = function (req, res, next) {
+const signin = (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (err || !user) {
@@ -98,19 +100,38 @@ module.exports.signin = function (req, res, next) {
   })(req, res, next);
 };
 
-exports.myprofile = async function (req, res, next) {
+const userList = async (req, res, next) => {
   try {
-    let id = req.payload.id;
-    let me = await User.findById(id).select(
-      "firstName lastName email phoneNumber username"
-    );
+    const users = await User.find({}).select(selectOptions);
 
-    res.status(200).json(me);
+    res.status(200).json(users);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
     });
   }
+};
+
+const userProfile = async (req, res, next) => {
+  try {
+    const id = req.payload.id;
+    const user = await User.findById(id).select(selectOptions);
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
+module.exports = {
+  signup,
+  signin,
+  userList,
+  userProfile,
 };

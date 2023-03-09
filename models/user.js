@@ -1,20 +1,31 @@
-let mongoose = require("mongoose");
-let crypto = require("crypto");
-let Schema = mongoose.Schema;
+const { Schema, model } = require("mongoose");
+const crypto = require("crypto");
+const roles = require("../helpers/roles");
 
-let UserSchema = mongoose.Schema(
+const UserSchema = Schema(
   {
     firstName: String,
     lastName: String,
     email: {
       type: String,
+      unique: true,
       match: [/.+\@.+\..+/, "Please fill a valid e-mail address"],
+    },
+    phoneNumber: {
+      type: String,
+      unique: true,
+      match: [/^\d{3}-\d{3}-\d{4}$/, "Please fill a valid phone number"],
     },
     username: {
       type: String,
       unique: true,
       required: "Username is required",
       trim: true,
+    },
+    role: {
+      type: String,
+      default: roles.patient,
+      enum: Object.values(roles),
     },
     password: {
       type: String,
@@ -34,13 +45,9 @@ let UserSchema = mongoose.Schema(
     },
     providerId: String,
     providerData: {},
-    created: {
-      type: Date,
-      default: Date.now,
-    },
-    admin: Boolean,
   },
   {
+    timestamps: true,
     collection: "user",
   }
 );
@@ -101,4 +108,4 @@ UserSchema.set("toJSON", {
   virtuals: true,
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = model("User", UserSchema);

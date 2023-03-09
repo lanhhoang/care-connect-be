@@ -1,8 +1,8 @@
-let User = require("../models/user");
-let passport = require("passport");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
-let jwt = require("jsonwebtoken");
-let config = require("../config/config");
+const config = require("../config/config");
+const User = require("../models/user");
 
 function getErrorMessage(err) {
   console.log(err);
@@ -69,7 +69,8 @@ module.exports.signin = function (req, res, next) {
         // Generating the JWT token.
         const payload = {
           id: user._id,
-          email: user.email,
+          username: user.username,
+          role: user.role,
         };
         const token = jwt.sign(
           {
@@ -78,7 +79,7 @@ module.exports.signin = function (req, res, next) {
           config.SECRETKEY,
           {
             algorithm: "HS512",
-            expiresIn: "20min",
+            expiresIn: "1d",
           }
         );
 
@@ -101,7 +102,7 @@ exports.myprofile = async function (req, res, next) {
   try {
     let id = req.payload.id;
     let me = await User.findById(id).select(
-      "firstName lastName email username admin created"
+      "firstName lastName email phoneNumber username"
     );
 
     res.status(200).json(me);

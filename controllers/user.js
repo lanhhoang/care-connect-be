@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const User = require("../models/user");
 
+const selectOptions = "firstName lastName email phoneNumber username role";
+
 function getErrorMessage(err) {
   console.log(err);
   let message = "";
@@ -100,9 +102,7 @@ const signin = (req, res, next) => {
 
 const userList = async (req, res, next) => {
   try {
-    const users = await User.find({}).select(
-      "firstName lastName email phoneNumber username role"
-    );
+    const users = await User.find({}).select(selectOptions);
 
     res.status(200).json(users);
   } catch (error) {
@@ -114,14 +114,12 @@ const userList = async (req, res, next) => {
   }
 };
 
-const myprofile = async (req, res, next) => {
+const userProfile = async (req, res, next) => {
   try {
-    let id = req.payload.id;
-    let me = await User.findById(id).select(
-      "firstName lastName email phoneNumber username"
-    );
+    const id = req.payload.id;
+    const user = await User.findById(id).select(selectOptions);
 
-    res.status(200).json(me);
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
     return res.status(400).json({
@@ -135,5 +133,5 @@ module.exports = {
   signup,
   signin,
   userList,
-  myprofile,
+  userProfile,
 };

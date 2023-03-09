@@ -30,7 +30,7 @@ function getErrorMessage(err) {
   return message;
 }
 
-module.exports.signup = function (req, res, next) {
+const signup = (req, res, next) => {
   let user = new User(req.body);
   user.provider = "local";
   // console.log(user);
@@ -51,7 +51,7 @@ module.exports.signup = function (req, res, next) {
   });
 };
 
-module.exports.signin = function (req, res, next) {
+const signin = (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (err || !user) {
@@ -98,7 +98,23 @@ module.exports.signin = function (req, res, next) {
   })(req, res, next);
 };
 
-exports.myprofile = async function (req, res, next) {
+const userList = async (req, res, next) => {
+  try {
+    const users = await User.find({}).select(
+      "firstName lastName email phoneNumber username role"
+    );
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
+const myprofile = async (req, res, next) => {
   try {
     let id = req.payload.id;
     let me = await User.findById(id).select(
@@ -107,10 +123,17 @@ exports.myprofile = async function (req, res, next) {
 
     res.status(200).json(me);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
     });
   }
+};
+
+module.exports = {
+  signup,
+  signin,
+  userList,
+  myprofile,
 };

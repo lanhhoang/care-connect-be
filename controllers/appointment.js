@@ -31,6 +31,36 @@ const appointmentList = async (req, res, next) => {
   }
 };
 
+const appointmentAdd = (req, res, next) => {
+  try {
+    const owner = ["", null, undefined].includes(req.body.owner)
+      ? req.payload.id
+      : req.body.owner;
+
+    const newItem = Appointment({ ...req.body, owner });
+
+    Appointment.create(newItem, (err, item) => {
+      if (err) {
+        console.error(err);
+
+        return res.status(400).json({
+          success: false,
+          message: getErrorMessage(err),
+        });
+      } else {
+        console.log(item);
+        res.status(201).json(item);
+      }
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
 module.exports = {
   appointmentList,
+  appointmentAdd,
 };

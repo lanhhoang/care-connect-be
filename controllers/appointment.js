@@ -60,7 +60,39 @@ const appointmentAdd = (req, res, next) => {
   }
 };
 
+const appointmentEdit = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const owner = ["", null, undefined].includes(req.body.owner)
+      ? req.payload.id
+      : req.body.owner;
+    const updatedItem = { ...req.body, owner };
+    console.log(updatedItem);
+
+    Appointment.updateOne({ _id: id }, updatedItem, (err, result) => {
+      if (err || result.modifiedCount === 0) {
+        console.error(err);
+        return res.status(400).json({
+          success: false,
+          message: err ? getErrorMessage(err) : "Item not found",
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: "Item updated successfully",
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
 module.exports = {
   appointmentList,
   appointmentAdd,
+  appointmentEdit,
 };

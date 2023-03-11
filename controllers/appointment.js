@@ -91,8 +91,40 @@ const appointmentEdit = (req, res, next) => {
   }
 };
 
+const appointmentDelete = (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    Appointment.findByIdAndRemove(
+      { _id: id },
+      { rawResult: true },
+      (err, result) => {
+        if (err || result.value === null) {
+          console.error(err);
+
+          return res.status(400).json({
+            success: false,
+            message: err ? getErrorMessage(err) : "Item not found",
+          });
+        } else {
+          res.status(200).json({
+            success: true,
+            message: "Item deleted successfully",
+          });
+        }
+      }
+    );
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
 module.exports = {
   appointmentList,
   appointmentAdd,
   appointmentEdit,
+  appointmentDelete,
 };

@@ -6,6 +6,7 @@ const {
   appointmentList,
   appointmentAdd,
   appointmentEdit,
+  appointmentDelete,
 } = require("../controllers/appointment");
 
 /* GET list of tournaments */
@@ -16,5 +17,13 @@ router.post("/add", requireAuth, appointmentAdd);
 
 /* PUT update tournament */
 router.put("/edit/:id", requireAuth, isAllowed(Appointment), appointmentEdit);
+
+/* DELETE delete tournament */
+router.delete(
+  "/delete/:id",
+  requireAuth,
+  isAllowed(Appointment),
+  appointmentDelete
+);
 
 module.exports = router;

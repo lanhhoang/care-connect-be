@@ -1,5 +1,5 @@
 // create a reference to the model
-let MedicalHistory = require("../models/medicalList");
+let MedicalRecord = require("../models/medical-record");
 
 function getErrorMessage(err) {
   if (err.errors) {
@@ -16,12 +16,12 @@ function getErrorMessage(err) {
 }
 
 /**
- * DISPLAYING MEDICAL LIST HISTORY
+ * DISPLAYING MEDICAL RECORD LIST
  * PROVIDING OWNER'S INFO AFTER LIST
  */
 module.exports.medList = async function (req, res, next) {
   try {
-    let medList = await MedicalHistory.find().populate({
+    let medList = await MedicalRecord.find().populate({
       path: "owner",
       select: "firstName lastName email username admin created",
     });
@@ -37,7 +37,7 @@ module.exports.medList = async function (req, res, next) {
 };
 
 /**
- * ADDING MEDICAL HISTORY ITEM
+ * ADDING MEDICAL RECORD ITEM
  * DEFINING OWNERSHIP OF ITEM
  */
 module.exports.medAdd = (req, res, next) => {
@@ -46,9 +46,9 @@ module.exports.medAdd = (req, res, next) => {
       ? req.payload.id
       : req.body.owner;
 
-    const newItem = MedicalHistory({ ...req.body, owner });
+    const newItem = MedicalRecord({ ...req.body, owner });
 
-    MedicalHistory.create(newItem, (err, item) => {
+    MedicalRecord.create(newItem, (err, item) => {
       if (err) {
         console.error(err);
 
@@ -79,9 +79,17 @@ try {
         const owner = ["", null, undefined].includes(req.body.owner)
         ? req.payload.id
         : req.body.owner;
-        const updatedItem = MedicalHistory({ ...req.body, owner });
+        const updatedItem = MedicalRecord({ ...req.body, owner });
 
-        MedicalHistory.updateOne({ _id: id }, updatedItem, (err, result) => {
+        
+
+        MedicalRecord.updateOne({ _id: id }, updatedItem, (err, result) => {
+
+
+        console.log("id " + id);
+
+
+
         if (err || result.modifiedCount === 0) {
             return res.status(400).json({
             success: false,
@@ -111,7 +119,7 @@ module.exports.medDelete = (req, res, next) => {
   try {
     const { id } = req.params;
 
-    MedicalHistory.findByIdAndRemove(
+    MedicalRecord.findByIdAndRemove(
       { _id: id },
       { rawResult: true },
       (err, result) => {

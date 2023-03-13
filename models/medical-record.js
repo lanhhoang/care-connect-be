@@ -20,8 +20,8 @@ let MedicalListSchema = mongoose.Schema(
     },
   },
   {
-    collection: "medicalList",
+    collection: "medicalRecordList",
   }
 );
 
-module.exports = mongoose.model("MedicalList", MedicalListSchema);
+module.exports = mongoose.model("MedicalRecordList", MedicalListSchema);

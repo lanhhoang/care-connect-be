@@ -2,8 +2,8 @@
 
 let mongoose = require("mongoose");
 
-// Create MedicalList schema
-let MedicalListSchema = mongoose.Schema(
+// Create Medical Record schema
+let MedicalRecordSchema = mongoose.Schema(
   {
     findings:String,
     medicine: String,
@@ -20,8 +20,8 @@ let MedicalListSchema = mongoose.Schema(
     },
   },
   {
-    collection: "medicalRecordList",
+    collection: "medicalRecord",
   }
 );
 
-module.exports = mongoose.model("MedicalRecordList", MedicalListSchema);
+module.exports = mongoose.model("MedicalRecord", MedicalRecordSchema);

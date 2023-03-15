@@ -16,10 +16,10 @@ function getErrorMessage(err) {
 }
 
 /**
- * DISPLAYING MEDICAL RECORD LIST
- * PROVIDING OWNER'S INFO AFTER LIST
+ * DISPLAYING MEDICAL RECORD - LIST
+ * PROVIDING OWNER'S INFO AFTER LISTING
  */
-module.exports.medList = async function (req, res, next) {
+module.exports.medRecord = async function (req, res, next) {
   try {
     let medList = await MedicalRecord.find().populate({
       path: "owner",

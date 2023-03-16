@@ -31,7 +31,6 @@ module.exports = function () {
     new LocalStrategy((username, password, done) => {
       User.findOne({ username: username }, (err, user) => {
         console.log("=====> LocalStrategy");
-        console.log("user: " + user);
 
         if (err) {
           return done(err);
@@ -44,7 +43,6 @@ module.exports = function () {
         }
 
         if (!user.authenticate(password)) {
-          console.log("Invalid password: " + password);
           return done(null, false, {
             message: "Invalid password",
           });

@@ -56,11 +56,7 @@ const signup = (req, res, next) => {
 const signin = (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
-      console.log("==DEBUG ERR ==> " + err);
-      console.log("==DEBUG USER ==> " + user);
-
       if (err || !user) {
-        console.log("==DEBUG INFO ==> " + info.message);
         return res.status(400).json({
           success: false,
           message: err || info.message,
@@ -132,7 +128,6 @@ const userProfile = async (req, res, next) => {
     });
   }
 };
-
 
 const userEdit = (req, res, next) => {
   try {

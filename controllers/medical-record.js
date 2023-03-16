@@ -19,14 +19,14 @@ function getErrorMessage(err) {
  * DISPLAYING MEDICAL RECORD - LIST
  * PROVIDING OWNER'S INFO AFTER LISTING
  */
-module.exports.medRecord = async function (req, res, next) {
+const medList = async (req, res, next) => {
   try {
-    let medList = await MedicalRecord.find().populate({
+    const merds = await MedicalRecord.find().populate({
       path: "owner",
-      select: "firstName lastName email username admin created",
+      select: "firstName lastName email phoneNumber username role",
     });
 
-    res.status(200).json(medList);
+    res.status(200).json(merds);
   } catch (error) {
     console.error(error);
     return res.status(400).json({
@@ -40,7 +40,7 @@ module.exports.medRecord = async function (req, res, next) {
  * ADDING MEDICAL RECORD ITEM
  * DEFINING OWNERSHIP OF ITEM
  */
-module.exports.medAdd = (req, res, next) => {
+const medAdd = (req, res, next) => {
   try {
     const owner = ["", null, undefined].includes(req.body.owner)
       ? req.payload.id
@@ -73,49 +73,43 @@ module.exports.medAdd = (req, res, next) => {
  * EDITING EXISTING ITEM
  * ONLY OWNER OR ADMIN CAN EDIT
  */
-module.exports.medEdit = (req, res, next) => {
-try {
-        const { id } = req.params;
-        const owner = ["", null, undefined].includes(req.body.owner)
-        ? req.payload.id
-        : req.body.owner;
-        const updatedItem = MedicalRecord({ ...req.body, owner });
+const medEdit = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const owner = ["", null, undefined].includes(req.body.owner)
+      ? req.payload.id
+      : req.body.owner;
+    const updatedItem = MedicalRecord({ ...req.body, owner });
 
-        
+    MedicalRecord.updateOne({ _id: id }, updatedItem, (err, result) => {
+      console.log("id " + id);
 
-        MedicalRecord.updateOne({ _id: id }, updatedItem, (err, result) => {
-
-
-        console.log("id " + id);
-
-
-
-        if (err || result.modifiedCount === 0) {
-            return res.status(400).json({
-            success: false,
-            message: err ? getErrorMessage(err) : "Item not found.",
-            });
-        } else {
-            res.status(200).json({
-            success: true,
-            message: "Item updated successfully.",
-            });
-            console.log("UPDATED ITEMS" + updatedItem);
-        }
-        });
-    } catch (error) {
+      if (err || result.modifiedCount === 0) {
         return res.status(400).json({
-        success: false,
-        message: getErrorMessage(error),
+          success: false,
+          message: err ? getErrorMessage(err) : "Item not found.",
         });
-    }
+      } else {
+        res.status(200).json({
+          success: true,
+          message: "Item updated successfully.",
+        });
+        console.log("UPDATED ITEMS" + updatedItem);
+      }
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
 };
 
 /**
  * DELETE EXISTING ITEM
  * ONLY OWNER OR ADMIN CAN DELETE
  */
-module.exports.medDelete = (req, res, next) => {
+const medDelete = (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -144,4 +138,11 @@ module.exports.medDelete = (req, res, next) => {
       message: getErrorMessage(error),
     });
   }
+};
+
+module.exports = {
+  medList,
+  medAdd,
+  medEdit,
+  medDelete,
 };

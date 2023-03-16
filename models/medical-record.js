@@ -1,27 +1,26 @@
-
-
-let mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 // Create Medical Record schema
-let MedicalRecordSchema = mongoose.Schema(
+const MedicalRecordSchema = Schema(
   {
-    findings:String,
+    findings: String,
     medicine: String,
     // adds relationship with USER
     // use Model ID = User
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
-    recordedDate: String,
     doctorName: {
-        type: String,
-        required: "Name is required",
+      type: String,
+      required: "Name is required",
     },
+    recordedDate: String,
   },
   {
+    timestamps: true,
     collection: "medicalRecord",
   }
 );
 
-module.exports = mongoose.model("MedicalRecord", MedicalRecordSchema);
+module.exports = model("MedicalRecord", MedicalRecordSchema);

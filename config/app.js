@@ -9,6 +9,7 @@ let cors = require("cors");
 
 var indexRouter = require("../routes/index");
 var usersRouter = require("../routes/users");
+var medRecRouter = require("../routes/medical-records");
 
 var errorHandler = require("./error-handler");
 
@@ -27,6 +28,7 @@ app.use(passport.initialize());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/medical-record", medRecRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

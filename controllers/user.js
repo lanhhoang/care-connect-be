@@ -129,9 +129,39 @@ const userProfile = async (req, res, next) => {
   }
 };
 
+const userEdit = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedUser = req.body;
+
+    User.updateOne({ _id: id }, updatedUser, (err, result) => {
+      if (err) {
+        console.log(err + " user not found");
+        return res.status(400).json({
+          success: false,
+          message: err ? getErrorMessage(err) : "User not found.",
+        });
+      } else {
+        console.log("success update");
+        res.status(200).json({
+          success: true,
+          message: "User updated successfully.",
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error + " fall in catch");
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(err),
+    });
+  }
+};
+
 module.exports = {
   signup,
   signin,
   userList,
   userProfile,
+  userEdit,
 };

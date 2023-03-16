@@ -5,6 +5,7 @@ const {
   signin,
   userList,
   userProfile,
+  userEdit
 } = require("../controllers/user");
 const { requireAuth, requireAdmin } = require("../controllers/auth");
 
@@ -17,5 +18,8 @@ router.get("/me", requireAuth, userProfile);
 router.post("/signup", signup);
 
 router.post("/signin", signin);
+
+/* PUT update user */
+router.put("/edit/:id", requireAuth, userEdit);
 
 module.exports = router;

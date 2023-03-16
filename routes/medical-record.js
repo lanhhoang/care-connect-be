@@ -5,7 +5,7 @@ let authController = require("../controllers/auth");
 let medHisController = require("../controllers/medical-record");
 
 /* GET list of medical Record */
-router.get("/list", medHisController.medRecord);
+router.get("/list", authController.requireAuth, medHisController.medRecord);
 
 /* POST create medical Record */
 router.post("/add", authController.requireAuth, medHisController.medAdd);

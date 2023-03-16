@@ -14,7 +14,7 @@ const getErrorMessage = (err) => {
   }
 };
 
-const appointmentList = async (req, res, next) => {
+const apptList = async (req, res, next) => {
   try {
     const appointments = await Appointment.find().populate({
       path: "owner",
@@ -31,7 +31,7 @@ const appointmentList = async (req, res, next) => {
   }
 };
 
-const appointmentAdd = (req, res, next) => {
+const apptAdd = (req, res, next) => {
   try {
     const owner = ["", null, undefined].includes(req.body.owner)
       ? req.payload.id
@@ -60,7 +60,7 @@ const appointmentAdd = (req, res, next) => {
   }
 };
 
-const appointmentEdit = (req, res, next) => {
+const apptEdit = (req, res, next) => {
   try {
     const { id } = req.params;
     const owner = ["", null, undefined].includes(req.body.owner)
@@ -91,7 +91,7 @@ const appointmentEdit = (req, res, next) => {
   }
 };
 
-const appointmentDelete = (req, res, next) => {
+const apptDelete = (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -123,8 +123,8 @@ const appointmentDelete = (req, res, next) => {
 };
 
 module.exports = {
-  appointmentList,
-  appointmentAdd,
-  appointmentEdit,
-  appointmentDelete,
+  apptList,
+  apptAdd,
+  apptEdit,
+  apptDelete,
 };

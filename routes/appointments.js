@@ -3,27 +3,22 @@ const router = express.Router();
 const Appointment = require("../models/appointment");
 const { requireAuth, isAllowed } = require("../controllers/auth");
 const {
-  appointmentList,
-  appointmentAdd,
-  appointmentEdit,
-  appointmentDelete,
+  apptList,
+  apptAdd,
+  apptEdit,
+  apptDelete,
 } = require("../controllers/appointment");
 
-/* GET list of tournaments */
-router.get("/list", appointmentList);
+/* GET list of appointments */
+router.get("/list", apptList);
 
-/* POST create tournament */
-router.post("/add", requireAuth, appointmentAdd);
+/* POST create appointment */
+router.post("/add", requireAuth, apptAdd);
 
-/* PUT update tournament */
-router.put("/edit/:id", requireAuth, isAllowed(Appointment), appointmentEdit);
+/* PUT update appointment */
+router.put("/edit/:id", requireAuth, isAllowed(Appointment), apptEdit);
 
-/* DELETE delete tournament */
-router.delete(
-  "/delete/:id",
-  requireAuth,
-  isAllowed(Appointment),
-  appointmentDelete
-);
+/* DELETE delete appointment */
+router.delete("/delete/:id", requireAuth, isAllowed(Appointment), apptDelete);
 
 module.exports = router;

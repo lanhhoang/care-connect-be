@@ -15,7 +15,7 @@ jobs:
           name: Setup Google Cloud CLI
           command: |
             echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-            gcloud --quiet config set project blprs-tournament-be
+            gcloud --quiet config set project abklp-clinic-management-be
             gcloud --quiet config set compute/zone northamerica-northeast1
       - run:
           name: Deploy the app

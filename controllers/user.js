@@ -102,9 +102,7 @@ const signin = (req, res, next) => {
 
 const userList = async (req, res, next) => {
   try {
-    const users = await User.find({}).select(selectOptions);
-
-    res.status(200).json(users);
+    res.status(200).json(res.paginatedResult);
   } catch (error) {
     console.error(error);
     return res.status(400).json({

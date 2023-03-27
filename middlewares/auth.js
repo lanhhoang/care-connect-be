@@ -92,7 +92,7 @@ const isAllowed = (model) => {
       // If it reaches this point, runs the next middleware.
       next();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return res.status(400).json({
         success: false,
         message: getErrorMessage(error),

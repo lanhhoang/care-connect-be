@@ -13,7 +13,7 @@ const MedicalRecordSchema = Schema(
     },
     doctorName: {
       type: String,
-      required: "Name is required",
+      // required: "Name is required",
     },
     recordedDate: String,
   },

@@ -23,8 +23,8 @@ function getErrorMessage(err) {
 const medList = async (req, res, next) => {
   try {
     const merds = await MedicalRecord.find().populate({
-      path: "owner",
-      select: "firstName lastName email phoneNumber username role",
+      path: "patient doctor",
+      select: "firstName lastName email phoneNumber",
     });
 
     res.status(200).json(merds);
@@ -64,15 +64,15 @@ const medSearch = async (req, res, next) => {
  * ADDING MEDICAL RECORD ITEM
  * DEFINING OWNERSHIP OF ITEM
  */
-const medAdd = (req, res, next) => {
+const medAdd = async (req, res, next) => {
   try {
-    const owner = ["", null, undefined].includes(req.body.owner)
+    const patient = ["", null, undefined].includes(req.body.patient)
       ? req.payload.id
-      : req.body.owner;
+      : req.body.patient;
 
-    const newItem = MedicalRecord({ ...req.body, owner });
+    const newItem = MedicalRecord({ ...req.body, patient });
 
-    MedicalRecord.create(newItem, (err, item) => {
+    MedicalRecord.create(newItem, async (err, item) => {
       if (err) {
         console.error(err);
 
@@ -80,10 +80,13 @@ const medAdd = (req, res, next) => {
           success: false,
           message: getErrorMessage(err),
         });
-      } else {
-        console.log(item);
-        res.status(201).json(item);
       }
+
+      await User.findByIdAndUpdate(patient._id, {
+        $push: { medicalRecords: item },
+      });
+
+      res.status(201).json(item);
     });
   } catch (error) {
     return res.status(400).json({
@@ -137,7 +140,7 @@ const medDelete = (req, res, next) => {
   try {
     const { id } = req.params;
 
-    MedicalRecord.findByIdAndRemove(
+    MedicalRecord.findByIdAndDelete(
       { _id: id },
       { rawResult: true },
       (err, result) => {
@@ -148,12 +151,12 @@ const medDelete = (req, res, next) => {
             success: false,
             message: err ? getErrorMessage(err) : "Item not found.",
           });
-        } else {
-          res.status(200).json({
-            success: true,
-            message: "Item deleted successfully.",
-          });
         }
+
+        res.status(200).json({
+          success: true,
+          message: "Item deleted successfully.",
+        });
       }
     );
   } catch (error) {

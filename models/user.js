@@ -45,6 +45,18 @@ const UserSchema = Schema(
     },
     providerId: String,
     providerData: {},
+    appointments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Appointment",
+      },
+    ],
+    medicalRecords: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "MedicalRecord",
+      },
+    ],
   },
   {
     timestamps: true,

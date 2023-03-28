@@ -10,16 +10,16 @@ const AppointmentSchema = Schema(
       type: String,
       trim: true,
     },
-    owner: {
+    patient: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    scheduledAt: String,
     status: {
       type: String,
       default: "scheduled",
       enum: ["scheduled", "completed", "cancelled"],
     },
+    scheduledAt: String,
   },
   {
     timestamps: true,

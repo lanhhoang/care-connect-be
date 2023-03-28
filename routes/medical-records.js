@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { requireAuth } = require("../controllers/auth");
+const { requireAuth } = require("../middlewares/auth");
 
 const {
   medList,

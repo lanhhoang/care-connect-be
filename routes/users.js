@@ -1,16 +1,26 @@
 const express = require("express");
 const router = express.Router();
+const User = require("../models/user");
 const {
   signup,
   signin,
   userList,
   userProfile,
-  userEdit
+  userEdit,
 } = require("../controllers/user");
-const { requireAuth, requireAdmin } = require("../controllers/auth");
+const { requireAuth, requireAdmin } = require("../middlewares/auth");
+const { paginate } = require("../middlewares/pagination");
+
+const selectOptions = "firstName lastName email phoneNumber username role";
 
 /* GET users listing. */
-router.get("/list", requireAuth, requireAdmin, userList);
+router.get(
+  "/list",
+  requireAuth,
+  requireAdmin,
+  paginate(User, selectOptions),
+  userList
+);
 
 /* GET user profile. */
 router.get("/me", requireAuth, userProfile);

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Appointment = require("../models/appointment");
-const { requireAuth, isAllowed } = require("../controllers/auth");
+const { requireAuth, isAllowed } = require("../middlewares/auth");
 const {
   apptList,
   apptAdd,

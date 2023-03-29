@@ -1,5 +1,6 @@
 // create a reference to the model
-let MedicalRecord = require("../models/medical-record");
+const MedicalRecord = require("../models/medical-record");
+const User = require("../models/user");
 
 function getErrorMessage(err) {
   if (err.errors) {
@@ -30,6 +31,29 @@ const medList = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
+const medSearch = async (req, res, next) => {
+  try {
+    const { email, phoneNumber } = req.query;
+    const patient = await User.findOne({ email: email }).populate({
+      path: "medicalRecords",
+    });
+
+    const merds = await MedicalRecord.find({
+      patient: patient._id,
+    }).populate({
+      path: "patient",
+      select: "firstName lastName email phoneNumber",
+    });
+
+    res.status(200).json(merds);
+  } catch (error) {
+    return res.status(404).json({
       success: false,
       message: getErrorMessage(error),
     });
@@ -142,6 +166,7 @@ const medDelete = (req, res, next) => {
 
 module.exports = {
   medList,
+  medSearch,
   medAdd,
   medEdit,
   medDelete,

@@ -3,19 +3,18 @@ const { Schema, model } = require("mongoose");
 // Create Medical Record schema
 const MedicalRecordSchema = Schema(
   {
-    findings: String,
+    diagnostic: String,
     medicine: String,
     // adds relationship with USER
     // use Model ID = User
-    owner: {
+    patient: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    doctorName: {
-      type: String,
-      required: "Name is required",
+    doctor: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-    recordedDate: String,
   },
   {
     timestamps: true,

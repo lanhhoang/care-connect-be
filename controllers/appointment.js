@@ -17,7 +17,7 @@ const getErrorMessage = (err) => {
 const apptList = async (req, res, next) => {
   try {
     const appointments = await Appointment.find().populate({
-      path: "owner",
+      path: "patient",
       select: "firstName lastName email phoneNumber username role",
     });
 
@@ -33,11 +33,11 @@ const apptList = async (req, res, next) => {
 
 const apptAdd = (req, res, next) => {
   try {
-    const owner = ["", null, undefined].includes(req.body.owner)
+    const patient = ["", null, undefined].includes(req.body.patient)
       ? req.payload.id
-      : req.body.owner;
+      : req.body.patient;
 
-    const newItem = Appointment({ ...req.body, owner });
+    const newItem = Appointment({ ...req.body, patient });
 
     Appointment.create(newItem, (err, item) => {
       if (err) {
@@ -63,11 +63,11 @@ const apptAdd = (req, res, next) => {
 const apptEdit = (req, res, next) => {
   try {
     const { id } = req.params;
-    const owner = ["", null, undefined].includes(req.body.owner)
+    const patient = ["", null, undefined].includes(req.body.patient)
       ? req.payload.id
-      : req.body.owner;
-    const updatedItem = { ...req.body, owner };
-    console.log(updatedItem);
+      : req.body.patient;
+
+    const updatedItem = { ...req.body, patient };
 
     Appointment.updateOne({ _id: id }, updatedItem, (err, result) => {
       if (err || result.modifiedCount === 0) {

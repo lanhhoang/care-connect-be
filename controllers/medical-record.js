@@ -40,7 +40,8 @@ const medList = async (req, res, next) => {
 const medSearch = async (req, res, next) => {
   try {
     const { email, phoneNumber } = req.query;
-    const patient = await User.findOne({ email: email }).populate({
+    const query = email ? { email: email } : { phoneNumber: phoneNumber };
+    const patient = await User.findOne(query).populate({
       path: "medicalRecords",
     });
 

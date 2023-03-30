@@ -91,6 +91,33 @@ const apptEdit = (req, res, next) => {
   }
 };
 
+const apptCancel = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedItem = { status: "cancelled" };
+
+    Appointment.updateOne({ _id: id }, updatedItem, (err, result) => {
+      if (err || result.modifiedCount === 0) {
+        console.error(err);
+        return res.status(400).json({
+          success: false,
+          message: err ? getErrorMessage(err) : "Item not found",
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: "Appointment cancelled successfully",
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
 const apptDelete = (req, res, next) => {
   try {
     const { id } = req.params;
@@ -126,5 +153,6 @@ module.exports = {
   apptList,
   apptAdd,
   apptEdit,
+  apptCancel,
   apptDelete,
 };

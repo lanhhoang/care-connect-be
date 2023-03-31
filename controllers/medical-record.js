@@ -23,7 +23,7 @@ function getErrorMessage(err) {
 const medList = async (req, res, next) => {
   try {
     const merds = await MedicalRecord.find().populate({
-      path: "patient doctor",
+      path: "owner",
       select: "firstName lastName email phoneNumber",
     });
 
@@ -41,14 +41,14 @@ const medSearch = async (req, res, next) => {
   try {
     const { email, phoneNumber } = req.query;
     const query = email ? { email: email } : { phoneNumber: phoneNumber };
-    const patient = await User.findOne(query).populate({
+    const owner = await User.findOne(query).populate({
       path: "medicalRecords",
     });
 
     const merds = await MedicalRecord.find({
-      patient: patient._id,
+      owner: owner._id,
     }).populate({
-      path: "patient",
+      path: "owner",
       select: "firstName lastName email phoneNumber",
     });
 
@@ -67,11 +67,11 @@ const medSearch = async (req, res, next) => {
  */
 const medAdd = async (req, res, next) => {
   try {
-    const patient = ["", null, undefined].includes(req.body.patient)
+    const owner = ["", null, undefined].includes(req.body.owner)
       ? req.payload.id
-      : req.body.patient;
+      : req.body.owner;
 
-    const newItem = MedicalRecord({ ...req.body, patient });
+    const newItem = MedicalRecord({ ...req.body, owner });
 
     MedicalRecord.create(newItem, async (err, item) => {
       if (err) {
@@ -83,7 +83,7 @@ const medAdd = async (req, res, next) => {
         });
       }
 
-      await User.findByIdAndUpdate(patient._id, {
+      await User.findByIdAndUpdate(owner._id, {
         $push: { medicalRecords: item },
       });
 

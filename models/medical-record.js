@@ -7,11 +7,7 @@ const MedicalRecordSchema = Schema(
     medicine: String,
     // adds relationship with USER
     // use Model ID = User
-    patient: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-    doctor: {
+    owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },

@@ -2,15 +2,15 @@ const { Schema, model } = require("mongoose");
 
 const AppointmentSchema = Schema(
   {
-    name: {
+    purpose: {
       type: String,
-      required: "Name is required",
+      required: "Purpose is required",
     },
     description: {
       type: String,
       trim: true,
     },
-    patient: {
+    owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },

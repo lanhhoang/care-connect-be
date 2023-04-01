@@ -1,4 +1,5 @@
 const Appointment = require("../models/appointment");
+const User = require("../models/user");
 
 const getErrorMessage = (err) => {
   console.error(err);
@@ -50,7 +51,7 @@ const apptList = async (req, res, next) => {
   }
 };
 
-const apptAdd = (req, res, next) => {
+const apptAdd = async (req, res, next) => {
   try {
     const owner = ["", null, undefined].includes(req.body.owner)
       ? req.payload.id
@@ -58,7 +59,7 @@ const apptAdd = (req, res, next) => {
 
     const newItem = Appointment({ ...req.body, owner });
 
-    Appointment.create(newItem, (err, item) => {
+    Appointment.create(newItem, async (err, item) => {
       if (err) {
         console.error(err);
 
@@ -66,10 +67,13 @@ const apptAdd = (req, res, next) => {
           success: false,
           message: getErrorMessage(err),
         });
-      } else {
-        console.log(item);
-        res.status(201).json(item);
       }
+
+      await User.findByIdAndUpdate(owner._id, {
+        $push: { appointments: item },
+      });
+
+      res.status(201).json(item);
     });
   } catch (error) {
     return res.status(400).json({

@@ -1,17 +1,33 @@
 const Appointment = require("../models/appointment");
 
 const getErrorMessage = (err) => {
-  if (err.errors) {
-    for (let errName in err.errors) {
-      if (err.errors[errName].message) return err.errors[errName].message;
+  console.error(err);
+  let message = "";
+
+  if (err.message) {
+    message = err.message;
+  }
+
+  if (err.code) {
+    switch (err.code) {
+      case 11000:
+      case 11001:
+        message = "Date & Time is already booked";
+        break;
+      default:
+        message = "Unknown server error";
     }
   }
 
-  if (err.message) {
-    return err.message;
-  } else {
-    return "Unknown server error";
+  if (err.errors) {
+    for (let errName in err.errors) {
+      if (err.errors[errName].message) {
+        message += `\n${err.errors[errName].message}`;
+      }
+    }
   }
+
+  return message;
 };
 
 const apptList = async (req, res, next) => {

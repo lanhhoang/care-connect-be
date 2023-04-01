@@ -1,30 +1,37 @@
 const { Schema, model } = require("mongoose");
+const statuses = require("../helpers/appointmentStatuses");
 
 const AppointmentSchema = Schema(
   {
-    name: {
+    purpose: {
       type: String,
-      required: "Name is required",
+      required: "Purpose is required",
     },
     description: {
       type: String,
       trim: true,
     },
-    patient: {
+    owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    scheduledAt: {
+      type: String,
+      unique: true,
+      required: "Date & Time is required",
+    },
     status: {
       type: String,
-      default: "scheduled",
-      enum: ["scheduled", "completed", "cancelled"],
+      default: statuses.scheduled,
+      enum: Object.values(statuses),
     },
-    scheduledAt: String,
   },
   {
     timestamps: true,
     collection: "appointment",
   }
 );
+
+AppointmentSchema.index({ scheduledAt: 1 }, { unique: true });
 
 module.exports = model("Appointment", AppointmentSchema);

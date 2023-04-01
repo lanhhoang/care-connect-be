@@ -1,23 +1,43 @@
 const Appointment = require("../models/appointment");
+const User = require("../models/user");
 
 const getErrorMessage = (err) => {
-  if (err.errors) {
-    for (let errName in err.errors) {
-      if (err.errors[errName].message) return err.errors[errName].message;
+  console.error(err);
+  let message = "";
+
+  if (err.message) {
+    message = err.message;
+  }
+
+  if (err.code) {
+    switch (err.code) {
+      case 11000:
+      case 11001:
+        message = "Date & Time is already booked";
+        break;
+      default:
+        message = "Unknown server error";
     }
   }
 
-  if (err.message) {
-    return err.message;
-  } else {
-    return "Unknown server error";
+  if (err.errors) {
+    for (let errName in err.errors) {
+      if (err.errors[errName].message) {
+        message += `\n${err.errors[errName].message}`;
+      }
+    }
   }
+
+  return message;
 };
 
 const apptList = async (req, res, next) => {
   try {
-    const appointments = await Appointment.find().populate({
-      path: "patient",
+    const { userId } = req.query;
+    const query = userId ? { owner: userId } : {};
+
+    const appointments = await Appointment.find(query).populate({
+      path: "owner",
       select: "firstName lastName email phoneNumber username role",
     });
 
@@ -31,15 +51,15 @@ const apptList = async (req, res, next) => {
   }
 };
 
-const apptAdd = (req, res, next) => {
+const apptAdd = async (req, res, next) => {
   try {
-    const patient = ["", null, undefined].includes(req.body.patient)
+    const owner = ["", null, undefined].includes(req.body.owner)
       ? req.payload.id
-      : req.body.patient;
+      : req.body.owner;
 
-    const newItem = Appointment({ ...req.body, patient });
+    const newItem = Appointment({ ...req.body, owner });
 
-    Appointment.create(newItem, (err, item) => {
+    Appointment.create(newItem, async (err, item) => {
       if (err) {
         console.error(err);
 
@@ -47,10 +67,13 @@ const apptAdd = (req, res, next) => {
           success: false,
           message: getErrorMessage(err),
         });
-      } else {
-        console.log(item);
-        res.status(201).json(item);
       }
+
+      await User.findByIdAndUpdate(owner._id, {
+        $push: { appointments: item },
+      });
+
+      res.status(201).json(item);
     });
   } catch (error) {
     return res.status(400).json({
@@ -63,11 +86,11 @@ const apptAdd = (req, res, next) => {
 const apptEdit = (req, res, next) => {
   try {
     const { id } = req.params;
-    const patient = ["", null, undefined].includes(req.body.patient)
+    const owner = ["", null, undefined].includes(req.body.owner)
       ? req.payload.id
-      : req.body.patient;
+      : req.body.owner;
 
-    const updatedItem = { ...req.body, patient };
+    const updatedItem = { ...req.body, owner };
 
     Appointment.updateOne({ _id: id }, updatedItem, (err, result) => {
       if (err || result.modifiedCount === 0) {

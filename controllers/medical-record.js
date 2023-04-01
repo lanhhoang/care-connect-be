@@ -22,7 +22,10 @@ function getErrorMessage(err) {
  */
 const medList = async (req, res, next) => {
   try {
-    const merds = await MedicalRecord.find().populate({
+    const { userId } = req.query;
+    const query = userId ? { owner: userId } : {};
+
+    const merds = await MedicalRecord.find(query).populate({
       path: "owner",
       select: "firstName lastName email phoneNumber",
     });
@@ -41,6 +44,7 @@ const medSearch = async (req, res, next) => {
   try {
     const { email, phoneNumber } = req.query;
     const query = email ? { email: email } : { phoneNumber: phoneNumber };
+
     const owner = await User.findOne(query).populate({
       path: "medicalRecords",
     });

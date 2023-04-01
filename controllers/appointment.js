@@ -32,7 +32,10 @@ const getErrorMessage = (err) => {
 
 const apptList = async (req, res, next) => {
   try {
-    const appointments = await Appointment.find().populate({
+    const { userId } = req.query;
+    const query = userId ? { owner: userId } : {};
+
+    const appointments = await Appointment.find(query).populate({
       path: "owner",
       select: "firstName lastName email phoneNumber username role",
     });

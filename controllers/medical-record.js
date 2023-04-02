@@ -49,12 +49,16 @@ const medSearch = async (req, res, next) => {
       path: "medicalRecords",
     });
 
-    const merds = await MedicalRecord.find({
-      owner: owner._id,
-    }).populate({
-      path: "owner",
-      select: "firstName lastName email phoneNumber",
-    });
+    let merds = [];
+
+    if (owner && owner._id) {
+      merds = await MedicalRecord.find({
+        owner: owner._id,
+      }).populate({
+        path: "owner",
+        select: "firstName lastName email phoneNumber",
+      });
+    }
 
     res.status(200).json(merds);
   } catch (error) {

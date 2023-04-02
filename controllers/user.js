@@ -114,7 +114,23 @@ const userList = async (req, res, next) => {
 
 const userProfile = async (req, res, next) => {
   try {
+    console.log(req);
     const id = req.payload.id;
+    const user = await User.findById(id).select(selectOptions);
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
+const userShow = async (req, res, next) => {
+  try {
+    const { id } = req.params;
     const user = await User.findById(id).select(selectOptions);
 
     res.status(200).json(user);
@@ -161,5 +177,6 @@ module.exports = {
   signin,
   userList,
   userProfile,
+  userShow,
   userEdit,
 };

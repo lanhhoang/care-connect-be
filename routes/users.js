@@ -6,6 +6,7 @@ const {
   signin,
   userList,
   userProfile,
+  userShow,
   userEdit,
 } = require("../controllers/user");
 const { requireAuth, requireAdmin } = require("../middlewares/auth");
@@ -24,6 +25,9 @@ router.get(
 
 /* GET user profile. */
 router.get("/me", requireAuth, userProfile);
+
+/* GET user by ID. */
+router.get("/show/:id", requireAuth, userShow);
 
 router.post("/signup", signup);
 

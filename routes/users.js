@@ -5,11 +5,16 @@ const {
   signup,
   signin,
   userList,
+  userSearch,
   userProfile,
   userShow,
   userEdit,
 } = require("../controllers/user");
-const { requireAuth, requireAdmin } = require("../middlewares/auth");
+const {
+  requireAuth,
+  requireAdmin,
+  requireEmployee,
+} = require("../middlewares/auth");
 const { paginate } = require("../middlewares/pagination");
 
 const selectOptions = "firstName lastName email phoneNumber username role";
@@ -22,6 +27,9 @@ router.get(
   paginate(User, selectOptions),
   userList
 );
+
+/* GET list of users by search param */
+router.get("/search", requireAuth, requireEmployee, userSearch);
 
 /* GET user profile. */
 router.get("/me", requireAuth, userProfile);

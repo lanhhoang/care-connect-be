@@ -112,9 +112,48 @@ const userList = async (req, res, next) => {
   }
 };
 
+const userSearch = async (req, res, next) => {
+  try {
+    const { q: query } = req.query;
+    const regex = new RegExp(query, "i");
+    const users = await User.find({
+      $or: [
+        { firstName: regex },
+        { lastName: regex },
+        { email: regex },
+        { phoneNumber: regex },
+        { username: regex },
+      ],
+    }).select(selectOptions);
+
+    res.status(200).json(users);
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
 const userProfile = async (req, res, next) => {
   try {
+    console.log(req);
     const id = req.payload.id;
+    const user = await User.findById(id).select(selectOptions);
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: getErrorMessage(error),
+    });
+  }
+};
+
+const userShow = async (req, res, next) => {
+  try {
+    const { id } = req.params;
     const user = await User.findById(id).select(selectOptions);
 
     res.status(200).json(user);
@@ -160,6 +199,8 @@ module.exports = {
   signup,
   signin,
   userList,
+  userSearch,
   userProfile,
+  userShow,
   userEdit,
 };

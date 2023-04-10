@@ -32,6 +32,27 @@ function getErrorMessage(err) {
   return message;
 }
 
+const generateJWT = (user) => {
+  // Generating the JWT token.
+  const payload = {
+    id: user._id,
+    username: user.username,
+    role: user.role,
+  };
+  const token = jwt.sign(
+    {
+      payload: payload,
+    },
+    config.SECRETKEY,
+    {
+      algorithm: "HS512",
+      expiresIn: "1d",
+    }
+  );
+
+  return token;
+};
+
 const signup = (req, res, next) => {
   let user = new User(req.body);
   user.provider = "local";
@@ -46,10 +67,18 @@ const signup = (req, res, next) => {
         message: message,
       });
     }
-    return res.json({
-      success: true,
-      message: "User created successfully!",
-    });
+
+    try {
+      return res.json({
+        success: true,
+        token: generateJWT(user),
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: message,
+      });
+    }
   });
 };
 
@@ -68,26 +97,9 @@ const signin = (req, res, next) => {
           return next(error);
         }
 
-        // Generating the JWT token.
-        const payload = {
-          id: user._id,
-          username: user.username,
-          role: user.role,
-        };
-        const token = jwt.sign(
-          {
-            payload: payload,
-          },
-          config.SECRETKEY,
-          {
-            algorithm: "HS512",
-            expiresIn: "1d",
-          }
-        );
-
         return res.json({
           success: true,
-          token: token,
+          token: generateJWT(user),
         });
       });
     } catch (error) {
@@ -137,7 +149,6 @@ const userSearch = async (req, res, next) => {
 
 const userProfile = async (req, res, next) => {
   try {
-    console.log(req);
     const id = req.payload.id;
     const user = await User.findById(id).select(selectOptions);
 

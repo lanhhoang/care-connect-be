@@ -171,6 +171,26 @@ const userShow = async (req, res, next) => {
   }
 };
 
+const userAdd = (req, res, next) => {
+  let user = new User(req.body);
+  user.provider = "local";
+
+  user.save((err) => {
+    if (err) {
+      let message = getErrorMessage(err);
+      return res.status(400).json({
+        success: false,
+        message: message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "User created successfully!",
+    });
+  });
+};
+
 const userEdit = (req, res, next) => {
   try {
     const { id } = req.params;
@@ -204,5 +224,6 @@ module.exports = {
   userSearch,
   userProfile,
   userShow,
+  userAdd,
   userEdit,
 };

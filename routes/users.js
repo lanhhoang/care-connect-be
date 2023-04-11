@@ -8,6 +8,7 @@ const {
   userSearch,
   userProfile,
   userShow,
+  userAdd,
   userEdit,
 } = require("../controllers/user");
 const {
@@ -40,6 +41,9 @@ router.get("/show/:id", requireAuth, userShow);
 router.post("/signup", signup);
 
 router.post("/signin", signin);
+
+/* POST create user */
+router.post("/add", requireAuth, requireAdmin, userAdd);
 
 /* PUT update user */
 router.put("/edit/:id", requireAuth, userEdit);

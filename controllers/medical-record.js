@@ -32,7 +32,6 @@ const medList = async (req, res, next) => {
 
     res.status(200).json(merds);
   } catch (error) {
-    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
@@ -83,8 +82,6 @@ const medAdd = async (req, res, next) => {
 
     MedicalRecord.create(newItem, async (err, item) => {
       if (err) {
-        console.error(err);
-
         return res.status(400).json({
           success: false,
           message: getErrorMessage(err),
@@ -118,8 +115,6 @@ const medEdit = (req, res, next) => {
     const updatedItem = MedicalRecord({ ...req.body, owner });
 
     MedicalRecord.updateOne({ _id: id }, updatedItem, (err, result) => {
-      console.log("id " + id);
-
       if (err || result.modifiedCount === 0) {
         return res.status(400).json({
           success: false,
@@ -130,7 +125,6 @@ const medEdit = (req, res, next) => {
           success: true,
           message: "Item updated successfully.",
         });
-        console.log("UPDATED ITEMS" + updatedItem);
       }
     });
   } catch (error) {
@@ -154,8 +148,6 @@ const medDelete = (req, res, next) => {
       { rawResult: true },
       (err, result) => {
         if (err || result.value === null) {
-          console.error(err);
-
           return res.status(400).json({
             success: false,
             message: err ? getErrorMessage(err) : "Item not found.",

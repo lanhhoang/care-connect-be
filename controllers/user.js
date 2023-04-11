@@ -7,7 +7,6 @@ const User = require("../models/user");
 const selectOptions = "firstName lastName email phoneNumber username role";
 
 function getErrorMessage(err) {
-  console.log(err);
   let message = "";
 
   if (err.message) {
@@ -56,7 +55,6 @@ const generateJWT = (user) => {
 const signup = (req, res, next) => {
   let user = new User(req.body);
   user.provider = "local";
-  // console.log(user);
 
   user.save((err) => {
     if (err) {
@@ -103,7 +101,6 @@ const signin = (req, res, next) => {
         });
       });
     } catch (error) {
-      console.log(error);
       return res.status(400).json({
         success: false,
         message: getErrorMessage(error),
@@ -116,7 +113,6 @@ const userList = async (req, res, next) => {
   try {
     res.status(200).json(res.paginatedResult);
   } catch (error) {
-    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
@@ -154,7 +150,6 @@ const userProfile = async (req, res, next) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
@@ -169,7 +164,6 @@ const userShow = async (req, res, next) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
@@ -184,13 +178,11 @@ const userEdit = (req, res, next) => {
 
     User.updateOne({ _id: id }, updatedUser, (err, result) => {
       if (err) {
-        console.log(err + " user not found");
         return res.status(400).json({
           success: false,
           message: err ? getErrorMessage(err) : "User not found.",
         });
       } else {
-        console.log("success update");
         res.status(200).json({
           success: true,
           message: "User updated successfully.",
@@ -198,7 +190,6 @@ const userEdit = (req, res, next) => {
       }
     });
   } catch (error) {
-    console.log(error + " fall in catch");
     return res.status(400).json({
       success: false,
       message: getErrorMessage(err),

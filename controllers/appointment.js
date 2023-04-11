@@ -2,7 +2,6 @@ const Appointment = require("../models/appointment");
 const User = require("../models/user");
 
 const getErrorMessage = (err) => {
-  console.error(err);
   let message = "";
 
   if (err.message) {
@@ -43,7 +42,6 @@ const apptList = async (req, res, next) => {
 
     res.status(200).json(appointments);
   } catch (error) {
-    console.error(error);
     return res.status(400).json({
       success: false,
       message: getErrorMessage(error),
@@ -61,8 +59,6 @@ const apptAdd = async (req, res, next) => {
 
     Appointment.create(newItem, async (err, item) => {
       if (err) {
-        console.error(err);
-
         return res.status(400).json({
           success: false,
           message: getErrorMessage(err),
@@ -94,7 +90,6 @@ const apptEdit = (req, res, next) => {
 
     Appointment.updateOne({ _id: id }, updatedItem, (err, result) => {
       if (err || result.modifiedCount === 0) {
-        console.error(err);
         return res.status(400).json({
           success: false,
           message: err ? getErrorMessage(err) : "Item not found",
@@ -121,7 +116,6 @@ const apptCancel = (req, res, next) => {
 
     Appointment.updateOne({ _id: id }, updatedItem, (err, result) => {
       if (err || result.modifiedCount === 0) {
-        console.error(err);
         return res.status(400).json({
           success: false,
           message: err ? getErrorMessage(err) : "Item not found",
@@ -150,8 +144,6 @@ const apptDelete = (req, res, next) => {
       { rawResult: true },
       (err, result) => {
         if (err || result.value === null) {
-          console.error(err);
-
           return res.status(400).json({
             success: false,
             message: err ? getErrorMessage(err) : "Item not found",
